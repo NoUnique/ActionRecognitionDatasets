@@ -7,11 +7,13 @@ DATASET:
       - 'data/kinetics/kinetics400/validate.csv'
       - 'data/kinetics/kinetics400/test.csv'
 OUTPUT_DIR: '/data/kinetics/videos'
-NUM_WORKERS: 24
+NUM_WORKERS: 10
 DROP_DUPLICATES: true
 SHUFFLE: false
 MIN_SIZE: 256
 X264_PRESET: veryfast
 NUM_ATTEMPTS: 10
 FORMAT_ID: 18
+AUDIO_ONLY: false
 PROXY: false
+#PROXY: id:passwd@proxyaddress

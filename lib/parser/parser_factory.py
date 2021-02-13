@@ -10,6 +10,7 @@ import functools
 
 from lib.parser.parser_kinetics import KineticsParser
 from lib.parser.parser_avspeech import AVSpeechParser
+from lib.parser.parser_audioset import AudiosetParser
 
 parser_map = {
     'kinetics': KineticsParser,
@@ -17,6 +18,7 @@ parser_map = {
     'kinetics600': KineticsParser,
     'kinetics700': KineticsParser,
     'avspeech': AVSpeechParser,
+    'audioset': AudiosetParser,
 }
 
 

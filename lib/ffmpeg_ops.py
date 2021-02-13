@@ -38,10 +38,7 @@ _X264_PRESET_LIST = ['placebo', 'veryslow', 'slower', 'slow', 'medium',
                      'fast', 'faster', 'veryfast', 'superfast', 'ultrafast']
 
 
-def encode_video(video, output_filename, width, height,
-                 start_time=None, end_time=None, x264_preset='veryfast',
-                 resize=True, min_size=256):
-
+def get_timestr(start_time=None, end_time=None):
     def _convert_to_sec(string):
         try:
             return float(string)
@@ -53,7 +50,6 @@ def encode_video(video, output_filename, width, height,
             except:
                 raise ValueError("cannot convert timestamp")
 
-    # apply custom settings if it exists
     command_time = []
     if start_time is not None:
         sec = _convert_to_sec(start_time)
@@ -68,6 +64,13 @@ def encode_video(video, output_filename, width, height,
                              '{:02d}:{:02d}:{:04.1f}'.format(int(sec / 3600),
                                                              int(sec / 60),
                                                              sec % 60.0)])
+    return command_time
+
+def encode_video(video, output_filename, width, height,
+                 start_time=None, end_time=None, x264_preset='veryfast',
+                 resize=True, min_size=256):
+    # apply custom settings if it exists
+    command_time = get_timestr(start_time, end_time)
 
     command_scale = []
     if resize:
@@ -96,6 +99,27 @@ def encode_video(video, output_filename, width, height,
         '-codec:v', 'libx264',
         '-preset', x264_preset,
         '-tune', 'fastdecode',
+        '-codec:a', 'aac',
+        output_filename,
+    ]
+
+    output = subprocess.check_output(' '.join(command),
+                                     shell=True,
+                                     stderr=subprocess.STDOUT)
+    return output
+
+def encode_audio(video, output_filename,
+                 start_time=None, end_time=None):
+    # apply custom settings if it exists
+    command_time = get_timestr(start_time, end_time)
+
+    command = [
+        'ffmpeg',
+        '-threads', '1',
+        '-loglevel', 'panic',
+        ] + command_time + [
+        '-i', '"{}"'.format(video),
+        '-vn',
         '-codec:a', 'aac',
         output_filename,
     ]

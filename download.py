@@ -24,7 +24,7 @@ from multiprocessing import Pool
 from functools import partial
 
 from lib.youtube_ops import get_youtube_info
-from lib.ffmpeg_ops import encode_video
+from lib.ffmpeg_ops import encode_video, encode_audio
 from lib.videofile_ops import get_output_filename, drop_duplicates
 from lib.parser.parser_factory import get_parser
 from lib.config_ops import load_config
@@ -32,7 +32,8 @@ from lib.config_ops import load_config
 
 def download_clip(annotation, output_dir,
                   min_size=256, x264_preset='veryfast',
-                  num_attempts=10, format_id=18, proxy=None):
+                  num_attempts=10, format_id=18,
+                  audio_only=False, proxy=None):
     video_id, start_time, end_time = annotation
 
     status = False
@@ -57,9 +58,13 @@ def download_clip(annotation, output_dir,
 
     # download video, resize, and encode it.
     try:
-        encode_video(download_url, output_filename,
-                     width, height, start_time, end_time,
-                     x264_preset=x264_preset, resize=True, min_size=min_size)
+        if not audio_only:
+            encode_video(download_url, output_filename,
+                         width, height, start_time, end_time,
+                         x264_preset=x264_preset, resize=True, min_size=min_size)
+        else:
+            encode_audio(download_url, output_filename,
+                         start_time, end_time)
     except subprocess.CalledProcessError as err:
         return status, err.output
 
@@ -90,6 +95,7 @@ def main(cfg_name=None):
                          x264_preset=cfg.X264_PRESET,
                          num_attempts=cfg.NUM_ATTEMPTS,
                          format_id=cfg.FORMAT_ID,
+                         audio_only=cfg.AUDIO_ONLY,
                          proxy=cfg.PROXY), annotations)
     else:
         for annotation in annotations:
@@ -99,6 +105,7 @@ def main(cfg_name=None):
                           x264_preset=cfg.X264_PRESET,
                           num_attempts=cfg.NUM_ATTEMPTS,
                           format_id=cfg.FORMAT_ID,
+                          audio_only=cfg.AUDIO_ONLY,
                           proxy=cfg.PROXY)
 
 

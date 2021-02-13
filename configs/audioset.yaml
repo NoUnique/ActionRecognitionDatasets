@@ -1,0 +1,13 @@
+DATASET:
+  NAME: audioset
+  ANNOTATION:
+    TYPE: csv
+    FILES:
+      - 'data/audioset/unbalanced_train_segments.csv'
+      - 'data/audioset/balanced_train_segments.csv'
+      - 'data/audioset/eval_segments.csv'
+OUTPUT_DIR: '/data/audioset/audios'
+NUM_WORKERS: 20
+NUM_ATTEMPTS: 1
+FORMAT_ID: 22
+AUDIO_ONLY: true
